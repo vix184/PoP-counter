@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Satoshis dus depuis 13h</title>
+  <style>
+    body {
+      margin: 0;
+      font-family: Arial, sans-serif;
+      background: #111;
+      color: #fff;
+      display: flex;
+      min-height: 100vh;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+    }
+    .box {
+      padding: 30px;
+      border-radius: 20px;
+      background: #1c1c1c;
+      box-shadow: 0 0 30px rgba(0,0,0,0.4);
+      max-width: 700px;
+    }
+    h1 {
+      margin-bottom: 10px;
+      font-size: 2rem;
+    }
+    .value {
+      font-size: 4rem;
+      font-weight: bold;
+      margin: 20px 0;
+      color: #f7931a;
+    }
+    .sub {
+      font-size: 1.2rem;
+      opacity: 0.85;
+    }
+  </style>
+</head>
+<body>
+  <div class="box">
+    <h1>Retard depuis 13h</h1>
+    <div class="value" id="sats">0</div>
+    <div class="sub" id="details">0 seconde écoulée = 0 satoshi dû</div>
+  </div>
+
+  <script>
+    function updateCounter() {
+      const startDate = new Date("2026-04-19T13:00:00+02:00"); // Suisse / Europe/Zurich en avril
+      const now = new Date();
+
+      const diffMs = now - startDate;
+      const diffSeconds = Math.max(0, Math.floor(diffMs / 1000));
+
+      document.getElementById("sats").textContent = diffSeconds.toLocaleString("fr-CH");
+      document.getElementById("details").textContent =
+        `${diffSeconds.toLocaleString("fr-CH")} seconde${diffSeconds > 1 ? "s" : ""} écoulée${diffSeconds > 1 ? "s" : ""} = ${diffSeconds.toLocaleString("fr-CH")} satoshi${diffSeconds > 1 ? "s" : ""} dû${diffSeconds > 1 ? "s" : ""}`;
+    }
+
+    updateCounter();
+    setInterval(updateCounter, 1000);
+  </script>
+</body>
+</html>
