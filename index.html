@@ -63,7 +63,8 @@
     .wallet-title {
       font-size: 1.1rem;
       margin-bottom: 10px;
-      opacity: 0.9;
+      opacity: 0.95;
+      text-align: center;
     }
 
     .wallet-shell {
@@ -95,12 +96,6 @@
       opacity: 0.9;
     }
 
-    .wallet-emoji {
-      font-size: 2.3rem;
-      margin-top: 18px;
-      text-align: center;
-    }
-
     .wallet-note {
       margin-top: 8px;
       font-size: 0.95rem;
@@ -113,10 +108,10 @@
     }
 
     button {
-      padding: 12px 25px;
-      font-size: 1rem;
+      padding: 15px 30px;
+      font-size: 1.2rem;
       border: none;
-      border-radius: 10px;
+      border-radius: 12px;
       cursor: pointer;
       background: #f7931a;
       color: black;
@@ -125,7 +120,7 @@
     }
 
     button:hover {
-      transform: scale(1.05);
+      transform: scale(1.03);
     }
 
     @media (max-width: 600px) {
@@ -139,6 +134,11 @@
 
       #credit {
         font-size: 1.1rem;
+      }
+
+      .wallet-info {
+        flex-direction: column;
+        text-align: center;
       }
     }
   </style>
@@ -158,7 +158,7 @@
     </div>
 
     <div class="wallet-section">
-      <div class="wallet-title">Wallet Bitcoin de 🇨🇭Vix18</div>
+      <div class="wallet-title">Wallet de 🇨🇭Vix18</div>
 
       <div class="wallet-shell">
         <div class="wallet-fill" id="walletFill"></div>
@@ -169,25 +169,14 @@
         <div id="walletPercent">0%</div>
       </div>
 
-      <div class="wallet-emoji" id="walletEmoji">👛</div>
-
       <div class="wallet-note">
         Objectif du wallet : <span id="walletGoalLabel">100’000</span> sats
       </div>
     </div>
 
     <div class="controls">
-      <button onclick="toggleCounter()" id="btn">⏸️ Pause</button>
+      <button onclick="handleAction()" id="mainBtn">⏸️ Pause</button>
     </div>
-    <div class="controls">
-  <button onclick="toggleCounter()" id="btn">⏸️ Pause</button>
-</div>
-
-<div class="controls">
-  <button onclick="poper()" id="poperBtn">
-    🎯 Appuie sur ce bouton quand tu seras prêt à Poper
-  </button>
-</div>
   </div>
 
   <script>
@@ -195,17 +184,14 @@
     const walletGoal = 100000;
 
     let intervalId;
-    let running = true;
+    let state = "running";
 
     function updateCounter() {
       const now = new Date();
-      const diffMs = now - startDate;
-      const diffSeconds = Math.max(0, Math.floor(diffMs / 1000));
+      const diffSeconds = Math.max(0, Math.floor((now - startDate) / 1000));
       const formatted = diffSeconds.toLocaleString("fr-CH");
 
-      const percentRaw = (diffSeconds / walletGoal) * 100;
-      const percentClamped = Math.min(percentRaw, 100);
-      const percentDisplay = percentClamped.toFixed(1);
+      const percent = Math.min((diffSeconds / walletGoal) * 100, 100);
 
       document.getElementById("sats").textContent = formatted;
 
@@ -215,30 +201,16 @@
       document.getElementById("credit").textContent =
         `Montant dû par Sambasats ⚡️ à 🇨🇭 Vix18 : ${formatted} sats`;
 
-      document.getElementById("walletFill").style.width = `${percentClamped}%`;
+      document.getElementById("walletFill").style.width = percent + "%";
 
       document.getElementById("walletProgress").textContent =
         `${formatted} / ${walletGoal.toLocaleString("fr-CH")} sats`;
 
       document.getElementById("walletPercent").textContent =
-        `${percentDisplay}%`;
+        `${percent.toFixed(1)}%`;
 
       document.getElementById("walletGoalLabel").textContent =
         walletGoal.toLocaleString("fr-CH");
-
-      const walletEmoji = document.getElementById("walletEmoji");
-
-      if (percentClamped < 25) {
-        walletEmoji.textContent = "👛";
-      } else if (percentClamped < 50) {
-        walletEmoji.textContent = "💼";
-      } else if (percentClamped < 75) {
-        walletEmoji.textContent = "🟠";
-      } else if (percentClamped < 100) {
-        walletEmoji.textContent = "💰";
-      } else {
-        walletEmoji.textContent = "₿🔥";
-      }
     }
 
     function start() {
@@ -250,18 +222,18 @@
       clearInterval(intervalId);
     }
 
-    function toggleCounter() {
-      const btn = document.getElementById("btn");
+    function handleAction() {
+      const btn = document.getElementById("mainBtn");
 
-      if (running) {
+      if (state === "running") {
         stop();
-        btn.textContent = "🟩 GO";
-        running = false;
-      } else {
-        updateCounter();
-        start();
-        btn.textContent = "🟥 STOP";
-        running = true;
+        state = "paused";
+        btn.textContent = "🎯 Pop";
+      } else if (state === "paused") {
+        state = "finished";
+        btn.textContent = "✅ Pop effectué";
+        document.getElementById("details").textContent =
+          "🔥 Pop validé ! Dette figée.";
       }
     }
 
