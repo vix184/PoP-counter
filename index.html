@@ -17,6 +17,7 @@
       justify-content: center;
       text-align: center;
       padding: 20px;
+      box-sizing: border-box;
     }
 
     .box {
@@ -38,11 +39,13 @@
       font-weight: bold;
       margin: 20px 0;
       color: #f7931a;
+      word-break: break-word;
     }
 
     .sub {
       font-size: 1.2rem;
       opacity: 0.85;
+      line-height: 1.5;
     }
 
     #credit {
@@ -50,38 +53,51 @@
       font-size: 1.3rem;
       color: #00ff9c;
       font-weight: bold;
+      line-height: 1.5;
     }
 
     .wallet-section {
       margin-top: 30px;
+      text-align: left;
     }
 
     .wallet-title {
+      font-size: 1.1rem;
       margin-bottom: 10px;
+      opacity: 0.95;
+      text-align: center;
     }
 
     .wallet-shell {
       width: 100%;
-      height: 30px;
+      height: 34px;
       background: #2a2a2a;
       border-radius: 999px;
       overflow: hidden;
+      box-shadow: inset 0 0 8px rgba(0, 0, 0, 0.5);
+      border: 1px solid rgba(255, 255, 255, 0.08);
     }
 
     .wallet-fill {
       height: 100%;
       width: 0%;
+      border-radius: 999px;
       background: linear-gradient(90deg, #f7931a, #ffb347);
-      transition: width 0.5s;
+      box-shadow: 0 0 12px rgba(247, 147, 26, 0.45);
     }
 
     .wallet-info {
       margin-top: 10px;
       font-size: 1rem;
+      display: flex;
+      justify-content: center;
+      gap: 12px;
+      flex-wrap: wrap;
+      opacity: 0.9;
     }
 
     .controls {
-      margin-top: 30px;
+      margin-top: 28px;
     }
 
     button {
@@ -89,27 +105,43 @@
       font-size: 1.3rem;
       border: none;
       border-radius: 14px;
-      cursor: pointer;
       background: #f7931a;
       color: black;
       font-weight: bold;
     }
+
+    @media (max-width: 600px) {
+      .value {
+        font-size: 3rem;
+      }
+
+      h1 {
+        font-size: 1.6rem;
+      }
+
+      #credit {
+        font-size: 1.1rem;
+      }
+
+      .wallet-info {
+        flex-direction: column;
+        text-align: center;
+      }
+    }
   </style>
 </head>
-
 <body>
   <div class="box">
-
     <h1>Retard depuis 13h</h1>
 
-    <div class="value" id="sats">0</div>
+    <div class="value" id="sats">28 922</div>
 
     <div class="sub" id="details">
-      0 seconde écoulée = 0 satoshi dû
+      🔥 Pop validé ! Dette figée.
     </div>
 
     <div id="credit">
-      Montant dû par Sambasats ⚡️ à 🇨🇭 Vix18 : 0 sats
+      Montant dû par Sambasats ⚡ à 🇨🇭 Vix18 : 28 922 sats
     </div>
 
     <div class="wallet-section">
@@ -120,72 +152,21 @@
       </div>
 
       <div class="wallet-info" id="walletInfo">
-        0 / 100’000 sats (0%)
+        28 922 / 100 000 sats (28.9%)
       </div>
     </div>
 
     <div class="controls">
-      <button onclick="handlePop()" id="mainBtn">
-        🎯 Pop
-      </button>
+      <button id="mainBtn">✅ Pop effectué</button>
     </div>
-
   </div>
 
   <script>
-    const startDate = new Date("2026-04-19T13:00:00+02:00");
+    const frozenValue = 28922;
     const walletGoal = 100000;
+    const percent = Math.min((frozenValue / walletGoal) * 100, 100);
 
-    let intervalId;
-    let frozenValue = null;
-    let finished = false;
-
-    function updateCounter() {
-      let diffSeconds;
-
-      if (frozenValue !== null) {
-        diffSeconds = frozenValue;
-      } else {
-        const now = new Date();
-        diffSeconds = Math.max(0, Math.floor((now - startDate) / 1000));
-      }
-
-      const formatted = diffSeconds.toLocaleString("fr-CH");
-      const percent = Math.min((diffSeconds / walletGoal) * 100, 100);
-
-      document.getElementById("sats").textContent = formatted;
-
-      document.getElementById("details").textContent =
-        frozenValue !== null
-          ? "🔥 Pop validé ! Dette figée."
-          : `${formatted} seconde(s) écoulée(s) = ${formatted} satoshis dûs`;
-
-      document.getElementById("credit").textContent =
-        `Montant dû par Sambasats ⚡️ à 🇨🇭 Vix18 : ${formatted} sats`;
-
-      document.getElementById("walletFill").style.width = percent + "%";
-
-      document.getElementById("walletInfo").textContent =
-        `${formatted} / ${walletGoal.toLocaleString("fr-CH")} sats (${percent.toFixed(1)}%)`;
-    }
-
-    function handlePop() {
-      if (finished) return;
-
-      const now = new Date();
-      frozenValue = Math.max(0, Math.floor((now - startDate) / 1000));
-
-      clearInterval(intervalId);
-      updateCounter();
-
-      document.getElementById("mainBtn").textContent = "✅ Pop effectué";
-
-      finished = true;
-    }
-
-    updateCounter();
-    intervalId = setInterval(updateCounter, 1000);
+    document.getElementById("walletFill").style.width = percent + "%";
   </script>
-
 </body>
 </html>
