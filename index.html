@@ -181,64 +181,75 @@
 
   <script>
     const startDate = new Date("2026-04-19T13:00:00+02:00");
-    const walletGoal = 100000;
+const walletGoal = 100000;
 
-    let intervalId;
-    let state = "running";
+let intervalId;
+let state = "running";
+let frozenValue = null; // 🔥 valeur figée
 
-    function updateCounter() {
-      const now = new Date();
-      const diffSeconds = Math.max(0, Math.floor((now - startDate) / 1000));
-      const formatted = diffSeconds.toLocaleString("fr-CH");
+function updateCounter() {
+  let diffSeconds;
 
-      const percent = Math.min((diffSeconds / walletGoal) * 100, 100);
+  if (frozenValue !== null) {
+    diffSeconds = frozenValue; // 👉 valeur figée
+  } else {
+    const now = new Date();
+    diffSeconds = Math.max(0, Math.floor((now - startDate) / 1000));
+  }
 
-      document.getElementById("sats").textContent = formatted;
+  const formatted = diffSeconds.toLocaleString("fr-CH");
+  const percent = Math.min((diffSeconds / walletGoal) * 100, 100);
 
-      document.getElementById("details").textContent =
-        `${formatted} seconde${diffSeconds > 1 ? "s" : ""} écoulée${diffSeconds > 1 ? "s" : ""} = ${formatted} satoshi${diffSeconds > 1 ? "s" : ""} dû${diffSeconds > 1 ? "s" : ""}`;
+  document.getElementById("sats").textContent = formatted;
 
-      document.getElementById("credit").textContent =
-        `Montant dû par Sambasats ⚡️ à 🇨🇭 Vix18 : ${formatted} sats`;
+  document.getElementById("details").textContent =
+    frozenValue !== null
+      ? "🔥 Pop validé ! Dette figée."
+      : `${formatted} seconde(s) écoulée(s) = ${formatted} satoshis dûs`;
 
-      document.getElementById("walletFill").style.width = percent + "%";
+  document.getElementById("credit").textContent =
+    `Montant dû par Sambasats ⚡️ à 🇨🇭 Vix18 : ${formatted} sats`;
 
-      document.getElementById("walletProgress").textContent =
-        `${formatted} / ${walletGoal.toLocaleString("fr-CH")} sats`;
+  document.getElementById("walletFill").style.width = percent + "%";
 
-      document.getElementById("walletPercent").textContent =
-        `${percent.toFixed(1)}%`;
+  document.getElementById("walletProgress").textContent =
+    `${formatted} / ${walletGoal.toLocaleString("fr-CH")} sats`;
 
-      document.getElementById("walletGoalLabel").textContent =
-        walletGoal.toLocaleString("fr-CH");
-    }
+  document.getElementById("walletPercent").textContent =
+    percent.toFixed(1) + "%";
+}
 
-    function start() {
-      clearInterval(intervalId);
-      intervalId = setInterval(updateCounter, 1000);
-    }
+function start() {
+  intervalId = setInterval(updateCounter, 1000);
+}
 
-    function stop() {
-      clearInterval(intervalId);
-    }
+function stop() {
+  clearInterval(intervalId);
+}
 
-    function handleAction() {
-      const btn = document.getElementById("mainBtn");
+function handleAction() {
+  const btn = document.getElementById("mainBtn");
 
-      if (state === "running") {
-        stop();
-        state = "paused";
-        btn.textContent = "🎯 Pop";
-      } else if (state === "paused") {
-        state = "finished";
-        btn.textContent = "✅ Pop effectué";
-        document.getElementById("details").textContent =
-          "🔥 Pop validé ! Dette figée.";
-      }
-    }
+  if (state === "running") {
+    stop();
+    state = "paused";
+    btn.textContent = "🎯 Pop";
 
-    updateCounter();
-    start();
+  } else if (state === "paused") {
+    // 🔥 ON FIGE LA VALEUR ICI
+    const now = new Date();
+    frozenValue = Math.max(0, Math.floor((now - startDate) / 1000));
+
+    stop(); // sécurité totale
+    updateCounter(); // affiche valeur figée
+
+    state = "finished";
+    btn.textContent = "✅ Pop effectué";
+  }
+}
+
+updateCounter();
+start();
   </script>
 </body>
 </html>
