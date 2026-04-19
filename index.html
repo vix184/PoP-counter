@@ -15,27 +15,44 @@
       align-items: center;
       justify-content: center;
       text-align: center;
+      padding: 20px;
+      box-sizing: border-box;
     }
+
     .box {
       padding: 30px;
       border-radius: 20px;
       background: #1c1c1c;
       box-shadow: 0 0 30px rgba(0,0,0,0.4);
       max-width: 700px;
+      width: 100%;
     }
+
     h1 {
       margin-bottom: 10px;
       font-size: 2rem;
     }
+
     .value {
       font-size: 4rem;
       font-weight: bold;
       margin: 20px 0;
       color: #f7931a;
+      word-break: break-word;
     }
+
     .sub {
       font-size: 1.2rem;
       opacity: 0.85;
+      line-height: 1.5;
+    }
+
+    #credit {
+      margin-top: 20px;
+      font-size: 1.3rem;
+      color: #00ff9c;
+      font-weight: bold;
+      line-height: 1.5;
     }
   </style>
 </head>
@@ -44,19 +61,25 @@
     <h1>Retard depuis 13h</h1>
     <div class="value" id="sats">0</div>
     <div class="sub" id="details">0 seconde écoulée = 0 satoshi dû</div>
+    <div id="credit">Montant dû par Sambasats ⚡️ à 🇨🇭 Vix18 : 0 sats</div>
   </div>
 
   <script>
     function updateCounter() {
-      const startDate = new Date("2026-04-19T13:00:00+02:00"); // Suisse / Europe/Zurich en avril
+      const startDate = new Date("2026-04-19T13:00:00+02:00");
       const now = new Date();
 
       const diffMs = now - startDate;
       const diffSeconds = Math.max(0, Math.floor(diffMs / 1000));
+      const formatted = diffSeconds.toLocaleString("fr-CH");
 
-      document.getElementById("sats").textContent = diffSeconds.toLocaleString("fr-CH");
+      document.getElementById("sats").textContent = formatted;
+
       document.getElementById("details").textContent =
-        `${diffSeconds.toLocaleString("fr-CH")} seconde${diffSeconds > 1 ? "s" : ""} écoulée${diffSeconds > 1 ? "s" : ""} = ${diffSeconds.toLocaleString("fr-CH")} satoshi${diffSeconds > 1 ? "s" : ""} dû${diffSeconds > 1 ? "s" : ""}`;
+        `${formatted} seconde${diffSeconds > 1 ? "s" : ""} écoulée${diffSeconds > 1 ? "s" : ""} = ${formatted} satoshi${diffSeconds > 1 ? "s" : ""} dû${diffSeconds > 1 ? "s" : ""}`;
+
+      document.getElementById("credit").textContent =
+        `Montant dû par Sambasats ⚡️ à 🇨🇭 Vix18 : ${formatted} sats`;
     }
 
     updateCounter();
