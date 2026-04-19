@@ -23,7 +23,7 @@
       padding: 30px;
       border-radius: 20px;
       background: #1c1c1c;
-      box-shadow: 0 0 30px rgba(0,0,0,0.4);
+      box-shadow: 0 0 30px rgba(0, 0, 0, 0.4);
       max-width: 700px;
       width: 100%;
     }
@@ -54,14 +54,106 @@
       font-weight: bold;
       line-height: 1.5;
     }
+
+    .wallet-section {
+      margin-top: 30px;
+      text-align: left;
+    }
+
+    .wallet-title {
+      font-size: 1.1rem;
+      margin-bottom: 10px;
+      opacity: 0.9;
+    }
+
+    .wallet-shell {
+      width: 100%;
+      height: 34px;
+      background: #2a2a2a;
+      border-radius: 999px;
+      overflow: hidden;
+      box-shadow: inset 0 0 8px rgba(0, 0, 0, 0.5);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+    }
+
+    .wallet-fill {
+      height: 100%;
+      width: 0%;
+      border-radius: 999px;
+      background: linear-gradient(90deg, #f7931a, #ffb347);
+      transition: width 0.8s ease;
+      box-shadow: 0 0 12px rgba(247, 147, 26, 0.45);
+    }
+
+    .wallet-info {
+      margin-top: 10px;
+      font-size: 1rem;
+      display: flex;
+      justify-content: space-between;
+      gap: 12px;
+      flex-wrap: wrap;
+      opacity: 0.9;
+    }
+
+    .wallet-emoji {
+      font-size: 2.3rem;
+      margin-top: 18px;
+      text-align: center;
+    }
+
+    .wallet-note {
+      margin-top: 8px;
+      font-size: 0.95rem;
+      opacity: 0.65;
+    }
+
+    @media (max-width: 600px) {
+      .value {
+        font-size: 3rem;
+      }
+
+      h1 {
+        font-size: 1.6rem;
+      }
+
+      #credit {
+        font-size: 1.1rem;
+      }
+    }
   </style>
 </head>
 <body>
   <div class="box">
     <h1>Retard depuis 13h</h1>
+
     <div class="value" id="sats">0</div>
-    <div class="sub" id="details">0 seconde écoulée = 0 satoshi dû</div>
-    <div id="credit">Montant dû par Sambasats ⚡️ à 🇨🇭 Vix18 : 0 sats</div>
+
+    <div class="sub" id="details">
+      0 seconde écoulée = 0 satoshi dû
+    </div>
+
+    <div id="credit">
+      Montant dû par Sambasats ⚡️ à 🇨🇭 Vix18 : 0 sats
+    </div>
+
+    <div class="wallet-section">
+      <div class="wallet-title">Wallet Bitcoin qui se remplit</div>
+
+      <div class="wallet-shell">
+        <div class="wallet-fill" id="walletFill"></div>
+      </div>
+
+      <div class="wallet-info">
+        <div id="walletProgress">0 / 100’000 sats</div>
+        <div id="walletPercent">0%</div>
+      </div>
+
+      <div class="wallet-emoji" id="walletEmoji">👛</div>
+
+      <div class="wallet-note">
+        Objectif du wallet : <span id="walletGoalLabel">100’000</span> sats
+      </div>
+    </div>
   </div>
 
   <script>
@@ -73,6 +165,11 @@
       const diffSeconds = Math.max(0, Math.floor(diffMs / 1000));
       const formatted = diffSeconds.toLocaleString("fr-CH");
 
+      const walletGoal = 100000;
+      const percentRaw = (diffSeconds / walletGoal) * 100;
+      const percentClamped = Math.min(percentRaw, 100);
+      const percentDisplay = percentClamped.toFixed(1);
+
       document.getElementById("sats").textContent = formatted;
 
       document.getElementById("details").textContent =
@@ -80,6 +177,31 @@
 
       document.getElementById("credit").textContent =
         `Montant dû par Sambasats ⚡️ à 🇨🇭 Vix18 : ${formatted} sats`;
+
+      document.getElementById("walletFill").style.width = `${percentClamped}%`;
+
+      document.getElementById("walletProgress").textContent =
+        `${formatted} / ${walletGoal.toLocaleString("fr-CH")} sats`;
+
+      document.getElementById("walletPercent").textContent =
+        `${percentDisplay}%`;
+
+      document.getElementById("walletGoalLabel").textContent =
+        walletGoal.toLocaleString("fr-CH");
+
+      const walletEmoji = document.getElementById("walletEmoji");
+
+      if (percentClamped < 25) {
+        walletEmoji.textContent = "👛";
+      } else if (percentClamped < 50) {
+        walletEmoji.textContent = "💼";
+      } else if (percentClamped < 75) {
+        walletEmoji.textContent = "🟠";
+      } else if (percentClamped < 100) {
+        walletEmoji.textContent = "💰";
+      } else {
+        walletEmoji.textContent = "₿🔥";
+      }
     }
 
     updateCounter();
