@@ -179,6 +179,15 @@
     <div class="controls">
       <button onclick="toggleCounter()" id="btn">⏸️ Pause</button>
     </div>
+    <div class="controls">
+  <button onclick="toggleCounter()" id="btn">⏸️ Pause</button>
+</div>
+
+<div class="controls">
+  <button onclick="poper()" id="poperBtn">
+    🎯 Appuie sur ce bouton quand tu seras prêt à Poper
+  </button>
+</div>
   </div>
 
   <script>
@@ -246,12 +255,12 @@
 
       if (running) {
         stop();
-        btn.textContent = "▶️ Reprendre";
+        btn.textContent = "🟩 GO";
         running = false;
       } else {
         updateCounter();
         start();
-        btn.textContent = "⏸️ Pause";
+        btn.textContent = "🟥 STOP";
         running = true;
       }
     }
